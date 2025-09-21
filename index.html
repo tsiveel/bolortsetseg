@@ -1,6 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Viewer</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .pdf-container {
+            width: 90%;
+            height: 80vh;
+            margin: 20px auto;
+            border: 1px solid #d0d0d0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        iframe, embed {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        p.fallback {
+            padding: 10px;
+            text-align: center;
+            background-color: #ffe0b2;
+            color: #d84315;
+        }
+    </style>
+</head>
 <body>
-    <iframe src="boloroo.pdf"></iframe>
+
+<!--     <h1>Displaying a PDF File</h1> -->
+
+    <!-- ** IMPORTANT **
+         Replace 'YOUR_PDF_URL_HERE.pdf' with the actual path or URL to your PDF file.
+         The PDF file must be accessible from where this HTML page is served.
+         For local files, a relative path works. For remote files, ensure CORS policies allow embedding.
+    -->
+    <input type="text" id="pdfUrl" value="boloroo" style="width: 80%; padding: 8px; margin: 0 auto; display: block;">
+    <button onclick="loadPdf()" style="padding: 10px 20px; display: block; margin: 10px auto;">Load PDF</button>
+
+    <h2>Option 1: Using &lt;iframe&gt; (Recommended)</h2>
+    <div class="pdf-container">
+        <iframe id="pdfIframe" src="">
+            <p class="fallback">
+                Your browser does not support iframes or PDF embedding in this way.
+                Please <a id="iframeFallbackLink" href="#" target="_blank">download the PDF</a> to view it.
+            </p>
+        </iframe>
+    </div>
+
+    <h2>Option 2: Using &lt;embed&gt;</h2>
+    <div class="pdf-container">
+        <embed id="pdfEmbed" src="" type="application/pdf">
+            <p class="fallback">
+                Your browser does not support embedding PDFs directly.
+                Please <a id="embedFallbackLink" href="#" target="_blank">download the PDF</a> to view it.
+            </p>
+        </embed>
+    </div>
+
+    <script>
+        function loadPdf() {
+            const pdfUrl = document.getElementById('pdfUrl').value;
+            if (pdfUrl && pdfUrl !== 'YOUR_PDF_URL_HERE.pdf') {
+                document.getElementById('pdfIframe').src = pdfUrl;
+                document.getElementById('iframeFallbackLink').href = pdfUrl;
+
+                const pdfEmbed = document.getElementById('pdfEmbed');
+                // Removing and re-adding embed to force reload
+                const parent = pdfEmbed.parentNode;
+                parent.removeChild(pdfEmbed);
+                const newEmbed = document.createElement('embed');
+                newEmbed.id = 'pdfEmbed';
+                newEmbed.src = pdfUrl;
+                newEmbed.type = 'application/pdf';
+                parent.appendChild(newEmbed);
+
+                document.getElementById('embedFallbackLink').href = pdfUrl;
+            } else {
+                alert("Please enter a valid PDF URL.");
+            }
+        }
+        // Initial load attempt if URL is pre-filled (for example, server-side)
+        // loadPdf();
+    </script>
+
 </body>
 </html>
